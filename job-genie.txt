@@ -1,0 +1,6 @@
+database user-name:job-genie-owner
+database password :admin@job-genie
+
+
+
+mongodb+srv://job-genie-owner:admin@job-genie@cluster0.rwcjrhd.mongodb.net/?appName=Cluster0
