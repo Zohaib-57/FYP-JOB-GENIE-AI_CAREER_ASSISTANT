@@ -32,7 +32,7 @@ const Signup = () => {
   }
 
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
       method: "POST",
       credentials: "include",
       headers: {
