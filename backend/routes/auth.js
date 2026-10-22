@@ -1,109 +1,91 @@
 import express from "express";
-import User from "../models/user.js";
-import bcryptjs from "bcryptjs";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import auth from "../middleware/auth.js";
+import User from "../models/User.js"; // adjust to your model path
 
 const router = express.Router();
-const AUTH_COOKIE = "jobgenie_token";
-const authCookieOptions = {
+
+const isProd = process.env.NODE_ENV === "production";
+
+// Cross-site cookie settings (Vercel frontend <-> Render backend)
+const cookieOptions = {
 	httpOnly: true,
-	secure: process.env.NODE_ENV === "production",
-	sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+	secure: isProd,
+	sameSite: "lax",
+	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 	path: "/",
-	maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
-// ================= SIGNUP =================
-router.post("/signup", async (req, res) => {
+const signToken = (userId) =>
+	jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+// REGISTER
+router.post("/register", async (req, res) => {
 	try {
 		const { name, email, password } = req.body;
 
-		// check if user exists
-		const userExists = await User.findOne({ email });
-		if (userExists) {
+		if (!name || !email || !password) {
+			return res.status(400).json({ message: "All fields are required" });
+		}
+
+		const existing = await User.findOne({ email });
+		if (existing) {
 			return res.status(400).json({ message: "User already exists" });
 		}
 
-		// hash password
-		const hashedPassword = await bcryptjs.hash(password, 10);
+		const hashed = await bcrypt.hash(password, 10);
+		const user = await User.create({ name, email, password: hashed });
 
-		// create user
-		const user = await User.create({
-			name,
-			email,
-			password: hashedPassword,
-		});
+		const token = signToken(user._id);
+		res.cookie("token", token, cookieOptions);
 
 		res.status(201).json({
-			message: "User registered successfully",
+			token, // also returned so the frontend can use a Bearer header if cookies get blocked
+			user: { id: user._id, name: user.name, email: user.email },
 		});
 	} catch (error) {
-		console.error("SIGNUP ERROR:", error.name);
-		res.status(500).json({ message: "Unable to create account" });
+		console.error("REGISTER ERROR:", error.name);
+		res.status(500).json({ message: "Internal server error" });
 	}
 });
 
-// ================= LOGIN =================
+// LOGIN
 router.post("/login", async (req, res) => {
 	try {
-		const { email, password } = req.body ?? {};
-		if (
-			typeof email !== "string" ||
-			!email.trim() ||
-			typeof password !== "string" ||
-			!password
-		) {
+		const { email, password } = req.body;
+
+		if (!email || !password) {
 			return res.status(400).json({ message: "Email and password are required" });
 		}
 
-		// check user
-		const user = await User.findOne({ email: email.trim() });
+		const user = await User.findOne({ email });
 		if (!user) {
-			return res.status(400).json({ message: "Invalid email or password" });
+			return res.status(400).json({ message: "Invalid credentials" });
 		}
 
-		// check password
-		const isMatch = await bcryptjs.compare(password, user.password);
-		if (!isMatch) {
-			return res.status(400).json({ message: "Invalid email or password" });
+		const match = await bcrypt.compare(password, user.password);
+		if (!match) {
+			return res.status(400).json({ message: "Invalid credentials" });
 		}
 
-		// create JWT token
-		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-			expiresIn: "7d",
-		});
+		const token = signToken(user._id);
+		res.cookie("token", token, cookieOptions);
 
-		res.cookie(AUTH_COOKIE, token, authCookieOptions);
 		res.json({
-			user: {
-				id: user._id,
-				name: user.name,
-				email: user.email,
-			},
+			token,
+			user: { id: user._id, name: user.name, email: user.email },
 		});
 	} catch (error) {
 		console.error("LOGIN ERROR:", error.name);
-		res.status(500).json({ message: "Unable to log in" });
+		res.status(500).json({ message: "Internal server error" });
 	}
 });
 
+// LOGOUT — clearCookie must use the same options (minus maxAge)
 router.post("/logout", (req, res) => {
-	res.clearCookie(AUTH_COOKIE, { path: "/" });
-	res.sendStatus(204);
-});
-
-// ================= GET CURRENT USER =================
-router.get("/me", auth, async (req, res) => {
-	try {
-		const user = await User.findById(req.user.id).select("-password");
-		if (!user) return res.status(401).json({ message: "Invalid session" });
-
-		res.json({ user });
-	} catch (error) {
-		console.error("CURRENT USER ERROR:", error.name);
-		res.status(500).json({ message: "Unable to load account" });
-	}
+	const { maxAge, ...clearOptions } = cookieOptions;
+	res.clearCookie("token", clearOptions);
+	res.json({ message: "Logged out" });
 });
 
 export default router;

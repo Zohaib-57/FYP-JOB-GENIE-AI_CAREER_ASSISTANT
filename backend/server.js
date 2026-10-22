@@ -10,6 +10,7 @@ import jobRoutes from "./routes/jobs.js";
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", 1);
 
 // ✅ CORS — allow the configured frontend and Vite's common local dev ports
 const allowedOrigins = new Set([
@@ -34,7 +35,7 @@ app.use(
 			callback(new Error("Not allowed by CORS"));
 		},
 		credentials: true,
-		methods: ["GET", "POST", "PUT", "DELETE"],
+		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 		allowedHeaders: ["Content-Type", "Authorization"],
 	}),
 );
