@@ -1,7 +1,8 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js"; // adjust to your model path
+import User from "../models/user.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -11,13 +12,26 @@ const isProd = process.env.NODE_ENV === "production";
 const cookieOptions = {
 	httpOnly: true,
 	secure: isProd,
-	sameSite: "lax",
+	sameSite: isProd ? "none" : "lax",
 	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 	path: "/",
 };
 
 const signToken = (userId) =>
 	jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+router.get("/me", auth, async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id).select("name email");
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		res.json({ user: { id: user._id, name: user.name, email: user.email } });
+	} catch (error) {
+		console.error("AUTH CHECK ERROR:", error.name);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
 
 // REGISTER
 router.post("/register", async (req, res) => {
