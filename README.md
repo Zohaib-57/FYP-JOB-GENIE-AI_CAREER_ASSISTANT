@@ -474,6 +474,45 @@ http://localhost:5173
 
 ---
 
+## ☁️ Deployment (Render + Vercel)
+
+Deploy the backend as a Render Web Service and the frontend as a Vercel project. Do not put backend secrets in Vercel environment variables or commit either `.env` file.
+
+### 1. Deploy the backend to Render
+
+1. Push the project to a GitHub repository and create a **Web Service** in Render from that repository.
+2. Set **Root Directory** to `backend`, **Build Command** to `npm ci`, and **Start Command** to `npm start`. The service health-check path can be `/`.
+3. Add these environment variables in the Render dashboard:
+
+   | Variable | Value |
+   | --- | --- |
+   | `NODE_ENV` | `production` |
+   | `MONGO_URI` | Your MongoDB Atlas connection URI |
+   | `JWT_SECRET` | A long, random secret generated locally |
+   | `CLIENT_URL` | Your Vercel production origin, such as `https://your-app.vercel.app` |
+   | `QWEN_API_KEY` or `GEMINI_API_KEY` | At least one AI provider key |
+   | `JSEARCH_API_KEY` | Required for job search |
+
+   `PORT` is assigned by Render; do not set it manually. Keep all secret values in Render's environment settings. Ensure your MongoDB Atlas network access settings allow connections from the Render service.
+4. Deploy, then open the Render service URL (for example, `https://your-api.onrender.com`) and confirm it returns an `API Running` status.
+
+### 2. Deploy the frontend to Vercel
+
+1. Import the same GitHub repository into Vercel.
+2. Set **Root Directory** to `frontend`. Use the Vite defaults: build command `npm run build` and output directory `dist`.
+3. Add the `VITE_API_URL` environment variable with the Render service URL, without a trailing slash (for example, `https://your-api.onrender.com`).
+4. Deploy and copy the production domain Vercel assigns to your project.
+
+### 3. Connect the deployed services
+
+Set Render's `CLIENT_URL` to the exact Vercel production origin (`https://...`, with no path or trailing slash), then redeploy the backend. If you use a custom frontend domain, set `CLIENT_URL` to that origin instead. The frontend's Vercel rewrite supports client-side routes such as `/login` and `/jobs` on refresh.
+
+Production auth cookies use `SameSite=None; Secure` so browsers can send them between the separate Vercel and Render domains. The frontend environment variable contains only the public API URL; never put API keys or other secrets in a `VITE_*` variable.
+
+Finally, verify signup/login, refreshing a protected route, resume generation/scoring, and job search. A free Render service may sleep when idle, so its first request after inactivity can take longer.
+
+---
+
 ## 📸 Screenshots
 
 > Add your own screenshots here for the thesis document:
