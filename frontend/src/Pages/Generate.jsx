@@ -14,9 +14,29 @@ import {
 	Globe,
 	Plus,
 	Trash,
+	ImagePlus,
+	X,
 } from "lucide-react";
 import HeroAnimation from "./HeroAnimation";
 import { toast } from "sonner";
+
+const resumeTemplates = [
+	{
+		id: "classic",
+		name: "Classic",
+		description: "A clear, single-column layout for a wide range of roles.",
+	},
+	{
+		id: "sidebar",
+		name: "Sidebar",
+		description: "A two-column design that gives skills and education a clear home.",
+	},
+	{
+		id: "modern",
+		name: "Modern",
+		description: "A confident color header with clean, easy-to-scan sections.",
+	},
+];
 
 const Generate = () => {
 	const [name, setName] = useState("");
@@ -49,18 +69,21 @@ const Generate = () => {
 	const [languages, setLanguages] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [resume, setResume] = useState(null);
+	const [selectedTemplate, setSelectedTemplate] = useState("classic");
+	const [showTemplatePicker, setShowTemplatePicker] = useState(true);
+	const [profileImage, setProfileImage] = useState("");
 	const resumeRef = useRef(null);
 
 	const steps = [
 		{
-			icon: <FileText size={20} />,
-			Heading: "Fill Details",
-			Parag: "enter your professional info",
-		},
-		{
 			icon: <Palette size={20} />,
 			Heading: "Pick Template",
 			Parag: "Choose a stunning layout",
+		},
+		{
+			icon: <FileText size={20} />,
+			Heading: "Fill Details",
+			Parag: "enter your professional info",
 		},
 		{
 			icon: <Wand2 size={20} />,
@@ -163,15 +186,41 @@ const Generate = () => {
 	};
 
 	const handleDownload = () => {
-		// Utilize the browser's highly reliable native Print-to-PDF engine
-		setTimeout(() => {
-			window.print();
-		}, 100);
+		if (!resumeRef.current) {
+			toast.error("The resume preview is not ready to export.");
+			return;
+		}
+		window.print();
 	};
 
 	const handleReset = () => {
 		setResume(null);
 		window.scrollTo({ top: 0, behavior: "smooth" });
+	};
+
+	const handleProfileImageChange = (event) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+		if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+			toast.error("Choose a JPG, PNG, or WebP image.");
+			event.target.value = "";
+			return;
+		}
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error("Choose an image smaller than 5 MB.");
+			event.target.value = "";
+			return;
+		}
+
+		event.target.value = "";
+		const reader = new FileReader();
+		reader.onload = () => {
+			if (typeof reader.result === "string") {
+				setProfileImage(reader.result);
+			}
+		};
+		reader.onerror = () => toast.error("Could not read that image. Please try another.");
+		reader.readAsDataURL(file);
 	};
 
 	const updateExperience = (index, field, value) => {
@@ -197,21 +246,21 @@ const Generate = () => {
 	};
 
 	const fieldClassName =
-		"w-full rounded-xl border border-white/10 bg-zinc-950/60 px-4 py-3 text-sm text-white placeholder:text-gray-600 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/15";
+		"w-full rounded-xl border border-[#30384b] bg-[#0b0e16]/80 px-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition duration-200 hover:-translate-y-0.5 hover:border-violet-300/40 hover:bg-[#101827] focus:border-[#8b7cf7] focus:ring-2 focus:ring-violet-400/15 focus:-translate-y-0.5";
 	const sectionTitleClassName =
-		"text-lg font-bold tracking-tight text-white md:text-xl";
+		"text-lg font-semibold tracking-[-0.02em] text-white md:text-xl";
 
 	return (
-		<div className="flex flex-col justify-center items-center">
+		<div className="flex flex-col items-center justify-center">
 			{/* Hero Section with Animation */}
-			<div className="relative w-full flex flex-col justify-center items-center min-h-150 pb-10">
+			<div className="resume-builder-hero relative flex min-h-[30rem] w-full flex-col items-center justify-center pb-10 md:min-h-[33rem]">
 				<div className="no-print">
 					<HeroAnimation />
 				</div>
 
 				{/* Heading */}
-				<div className="relative z-10 flex justify-center items-center flex-col pt-25 gap-4 text-center px-4 no-print">
-				<h1 className="text-transparent font-semibold tracking-tight bg-clip-text bg-[linear-gradient(90deg,#06b6d4_0%,#9333ea_30%,#9333ea_70%,#06b6d4_100%)] text-4xl md:text-5xl">
+				<div className="relative z-10 flex flex-col items-center justify-center gap-4 px-4 pt-20 text-center no-print md:pt-24">
+				<h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
 						<span className="text-white">AI</span> Resume Builder
 					</h1>
 					<p className="max-w-xl text-sm leading-relaxed text-gray-400 md:text-base">
@@ -221,15 +270,15 @@ const Generate = () => {
 				</div>
 
 				{/* Steps */}
-				<div className="relative z-10 w-full max-w-200 mt-12 hidden md:flex items-center no-print">
-					<div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-600 -translate-y-1/2 z-0"></div>
+				<div className="relative z-10 mt-10 hidden w-full max-w-3xl items-center no-print md:flex">
+					<div className="absolute left-0 top-1/2 z-0 h-px w-full -translate-y-1/2 bg-[#30384b]"></div>
 					<div className="relative z-10 w-full flex justify-between px-6">
 						{steps.map((step) => (
 							<div
 								key={step.Heading}
-								className="flex flex-col items-center justify-center bg-zinc-900 rounded-xl p-3 border border-white/10"
+								className="flex flex-col items-center justify-center rounded-xl border border-[#30384b] bg-[#111827] p-3"
 							>
-								<div className="text-white bg-[linear-gradient(195deg,#6D28D9,#0891B2)] p-3 rounded-lg shadow-lg">
+								<div className="rounded-lg border border-violet-300/15 bg-violet-400/[0.1] p-3 text-violet-200">
 									{step.icon}
 								</div>
 								<div className="mt-3 w-28 text-center font-semibold text-white text-sm">
@@ -241,10 +290,10 @@ const Generate = () => {
 				</div>
 
 				{/* Main Content Area: Conditional Rendering (Form -> Loading -> Result) */}
-				<div className="relative z-10 w-full max-w-5xl px-4 lg:px-8 mt-16 flex justify-center text-white">
+				<div className="resume-content-area relative z-10 mt-12 flex w-full max-w-6xl justify-center px-4 text-white lg:px-8">
 					{loading ? (
 						/* Loading State */
-						<div className="flex flex-col items-center justify-center p-20 gap-6 text-purple-400 w-full bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+						<div className="flex w-full flex-col items-center justify-center gap-6 rounded-2xl border border-[#30384b] bg-[#111827] p-8 text-violet-300 shadow-xl shadow-black/20 backdrop-blur-md sm:p-14">
 							<svg
 								className="animate-spin h-16 w-16"
 								viewBox="0 0 24 24"
@@ -273,11 +322,11 @@ const Generate = () => {
 								</p>
 							</div>
 						</div>
-					) : resume ? (
+					) : resume && !showTemplatePicker ? (
 						/* Result State */
-						<div className="w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-5 duration-700">
+						<div className="resume-print-region w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-5 duration-700">
 							{/* Action Buttons Top Bar */}
-							<div className="w-full max-w-[210mm] flex justify-between items-center bg-white/5 border border-white/10 p-4 rounded-2xl mb-8 backdrop-blur-md no-print">
+							<div className="mb-6 flex w-full max-w-[210mm] flex-col items-stretch justify-between gap-4 rounded-2xl border border-[#30384b] bg-[#111827] p-4 backdrop-blur-md no-print sm:flex-row sm:items-center">
 								<div className="flex items-center gap-3">
 									<Wand2 className="text-purple-400 h-6 w-6" />
 									<div>
@@ -289,18 +338,25 @@ const Generate = () => {
 										</p>
 									</div>
 								</div>
-								<div className="flex gap-4">
+								<div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+									<button
+										type="button"
+										onClick={() => setShowTemplatePicker(true)}
+										className="flex items-center justify-center gap-2 rounded-xl border border-[#30384b] bg-[#1b2131] px-4 py-2.5 font-medium text-gray-200 transition duration-200 hover:bg-[#232b3d] sm:px-5"
+									>
+										<Palette className="h-4 w-4" /> Change Template
+									</button>
 									<button
 										type="button"
 										onClick={handleReset}
-										className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium bg-zinc-800 hover:bg-zinc-700 text-white transition duration-300"
+										className="flex items-center justify-center gap-2 rounded-xl border border-[#30384b] bg-[#1b2131] px-4 py-2.5 font-medium text-gray-200 transition duration-200 hover:bg-[#232b3d] sm:px-5"
 									>
 										<RefreshCcw className="h-4 w-4" /> Create Another
 									</button>
 									<button
 										type="button"
 										onClick={handleDownload}
-										className="flex items-center gap-2 bg-[linear-gradient(to_right,#9333ea,#06b6d4)] px-5 py-2.5 rounded-xl font-medium text-white hover:scale-105 duration-300 shadow-[0_0_20px_rgba(147,51,234,0.4)]"
+										className="flex items-center justify-center gap-2 rounded-xl bg-[#7367f5] px-4 py-2.5 font-medium text-white transition duration-200 hover:bg-[#8176ff] sm:px-5"
 									>
 										<Download className="h-4 w-4" /> Export PDF
 									</button>
@@ -311,15 +367,26 @@ const Generate = () => {
 							<div className="w-full flex justify-center pb-20 overflow-x-auto sm:overflow-visible">
 								<div
 									id="resume-paper"
-									className="border border-white/20 bg-gray-950 p-2.5 rounded-[10px] shadow-2xl shrink-0 print:border-none print:shadow-none print:p-0 print:bg-white"
+									className="shrink-0 rounded-[10px] border border-[#30384b] bg-gray-950 p-2.5 shadow-2xl print:border-none print:bg-white print:p-0 print:shadow-none"
 									style={{ width: "210mm" }}
 								>
 									<div
 										ref={resumeRef}
-										className="bg-white text-black p-8.75 min-h-[297mm]"
+										data-template={selectedTemplate}
+										className={`resume-document resume-template-${selectedTemplate} bg-white text-black p-8.75 min-h-[297mm]`}
 									>
 										{/* Header */}
-										<div className="border-b-2 border-purple-600 pb-4 mb-4 text-center">
+										<div
+											className={`resume-header border-b-2 border-purple-600 pb-4 mb-4 text-center ${profileImage ? "resume-header--with-photo" : ""}`}
+										>
+											{profileImage && (
+												<img
+													src={profileImage}
+													alt={`${resume.name} profile`}
+													className="resume-profile-image"
+												/>
+											)}
+											<div className="resume-header-content">
 											<h1 className="text-3xl font-bold text-gray-900 mb-1">
 												{resume.name}
 											</h1>
@@ -371,10 +438,12 @@ const Generate = () => {
 														</span>
 													)}
 											</div>
+											</div>
 										</div>
 
+										<div className="resume-body" data-template={selectedTemplate}>
 										{/* Summary */}
-										<div className="mb-5">
+										<div className="resume-section resume-summary mb-5">
 											<h2 className="text-[14px] font-bold text-purple-800 uppercase border-b border-gray-300 pb-1 mb-2">
 												Professional Summary
 											</h2>
@@ -385,14 +454,14 @@ const Generate = () => {
 
 										{/* Experience */}
 										{resume.experience?.length > 0 && (
-											<div className="mb-5">
+											<div className="resume-section resume-experience mb-5">
 												<h2 className="text-[14px] font-bold text-purple-800 uppercase border-b border-gray-300 pb-1 mb-3">
 													Experience
 												</h2>
 												{resume.experience.map((exp, i) => (
 													<div
 														key={`${exp.title || "experience"}-${exp.company || "company"}-${i}`}
-														className="mb-4 break-inside-avoid"
+														className="resume-entry mb-4 break-inside-avoid"
 													>
 														<div className="flex justify-between items-baseline mb-1">
 															<p className="font-bold text-[14px] text-gray-900">
@@ -417,14 +486,14 @@ const Generate = () => {
 
 										{/* Education */}
 										{resume.education?.length > 0 && (
-											<div className="mb-5">
+											<div className="resume-section resume-education mb-5">
 												<h2 className="text-[14px] font-bold text-purple-800 uppercase border-b border-gray-300 pb-1 mb-3">
 													Education
 												</h2>
 												{resume.education.map((edu, i) => (
 													<div
 														key={`${edu.degree || "education"}-${edu.institution || "institution"}-${i}`}
-														className="mb-3 break-inside-avoid"
+														className="resume-entry mb-3 break-inside-avoid"
 													>
 														<div className="flex justify-between items-baseline mb-0.5">
 															<p className="font-bold text-[14px] text-gray-900">
@@ -451,11 +520,11 @@ const Generate = () => {
 										)}
 
 										{resume.customSections?.length > 0 && (
-											<div className="mb-5 space-y-4">
+											<div className="resume-section resume-custom mb-5 space-y-4">
 												{resume.customSections.map((section, index) => (
 													<section
 														key={`${section.title || "section"}-${index}`}
-														className="break-inside-avoid"
+														className="resume-entry break-inside-avoid"
 													>
 														<h2 className="mb-2 border-b border-gray-300 pb-1 text-[14px] font-bold uppercase text-purple-800">
 															{section.title}
@@ -471,7 +540,7 @@ const Generate = () => {
 										)}
 
 										{/* Technical Skills & Languages Grid layout */}
-										<div className="grid grid-cols-2 gap-6 break-inside-avoid">
+										<div className="resume-section resume-skills grid grid-cols-2 gap-6 break-inside-avoid">
 											{/* Skills */}
 											{resume.skills?.length > 0 && (
 												<div>
@@ -525,27 +594,125 @@ const Generate = () => {
 												)}
 											</div>
 										</div>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+					) : showTemplatePicker ? (
+						<div className="w-full max-w-5xl rounded-3xl border border-[#30384b] bg-[#111827]/95 p-5 shadow-2xl shadow-black/25 backdrop-blur-xl sm:p-8">
+							<div className="mb-7">
+								<p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+									{resume ? "Choose your layout" : "Step 1 · Choose your layout"}
+								</p>
+								<h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+									Start with a resume template
+								</h2>
+								<p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-400">
+									{resume
+										? "Preview a different layout for your generated resume."
+										: "Select a layout before adding your details. You can change it anytime while editing your resume."}
+								</p>
+							</div>
+
+							<div className="grid gap-4 md:grid-cols-3">
+								{resumeTemplates.map((template) => (
+									<button
+										key={template.id}
+										type="button"
+										aria-pressed={selectedTemplate === template.id}
+										onClick={() => setSelectedTemplate(template.id)}
+										className={`group rounded-2xl border p-3 text-left transition duration-200 hover:-translate-y-1 ${
+											selectedTemplate === template.id
+												? "border-violet-300/70 bg-violet-400/[0.08] shadow-lg shadow-violet-950/25"
+												: "border-[#30384b] bg-[#0b0e16]/60 hover:border-violet-300/35"
+										}`}
+									>
+										<div
+											className={`template-mini-preview template-mini-preview--${template.id}`}
+											aria-hidden="true"
+										>
+											<div className="template-mini-header">
+												<span className="template-mini-avatar" />
+												<span className="template-mini-title" />
+												<span className="template-mini-subtitle" />
+											</div>
+											<div className="template-mini-content">
+												<span className="template-mini-section" />
+												<span className="template-mini-line" />
+												<span className="template-mini-line template-mini-line--short" />
+												<span className="template-mini-section" />
+												<span className="template-mini-line" />
+												<span className="template-mini-line template-mini-line--short" />
+												<span className="template-mini-section" />
+												<span className="template-mini-line" />
+											</div>
+										</div>
+										<div className="flex items-start justify-between gap-3 px-1 pt-4">
+											<div>
+												<h3 className="font-semibold text-white">
+													{template.name}
+												</h3>
+												<p className="mt-1 text-xs leading-relaxed text-gray-400">
+													{template.description}
+												</p>
+											</div>
+											<span
+												className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs ${
+													selectedTemplate === template.id
+														? "border-violet-300 bg-violet-400 text-white"
+														: "border-gray-600 text-transparent"
+												}`}
+											>
+												✓
+											</span>
+										</div>
+									</button>
+								))}
+							</div>
+
+							<div className="mt-7 flex flex-col-reverse justify-between gap-3 border-t border-[#30384b] pt-5 sm:flex-row sm:items-center">
+								<p className="text-xs text-gray-500">
+									Your photo is optional and can be added in the next step.
+								</p>
+								<button
+									type="button"
+									onClick={() => setShowTemplatePicker(false)}
+									className="rounded-xl bg-[#7367f5] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition hover:-translate-y-0.5 hover:bg-[#8176ff]"
+								>
+									{resume ? "Apply selected template" : "Continue to details"}
+								</button>
+							</div>
+						</div>
 					) : (
 						/* Input Form State */
-						<div className="resume-builder-form w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/80 shadow-2xl shadow-black/20 backdrop-blur-xl animate-in fade-in duration-500">
-							<div className="border-b border-white/10 bg-white/[0.03] px-6 py-6 md:px-10">
+						<div className="resume-builder-form w-full max-w-6xl overflow-hidden rounded-3xl border border-[#30384b] bg-[#111827]/95 shadow-2xl shadow-black/25 backdrop-blur-xl animate-in fade-in duration-500">
+							<div className="border-b border-[#30384b] bg-white/[0.025] px-5 py-6 sm:px-7 md:px-10">
 								<div className="flex flex-col gap-2">
 						<p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Your resume, your story</p>
 						<h2 className="text-2xl font-bold tracking-tight text-white">Build your professional profile</h2>
 						<p className="max-w-2xl text-sm leading-relaxed text-gray-400">Required fields are marked with *. Add the sections that fit your background; leave anything that doesn’t apply blank. We’ll polish your wording without inventing details.</p>
+						<div className="mt-2 flex flex-wrap items-center gap-3">
+							<span className="rounded-lg border border-violet-300/20 bg-violet-400/[0.08] px-3 py-1.5 text-xs font-medium text-violet-200">
+								{resumeTemplates.find((template) => template.id === selectedTemplate)?.name} template
+							</span>
+							<button
+								type="button"
+								onClick={() => setShowTemplatePicker(true)}
+								className="text-xs font-semibold text-cyan-200 underline decoration-cyan-200/30 underline-offset-4 transition hover:text-white"
+							>
+								Change template
+							</button>
+						</div>
 								</div>
 							</div>
-							<div className="flex flex-col gap-8 px-6 py-7 md:px-10 md:py-9">
-								<section className="flex flex-col gap-5">
+							<div className="flex flex-col gap-5 px-4 py-5 sm:px-6 sm:py-7 md:gap-6 md:px-10 md:py-9">
+								<section className="flex flex-col gap-5 rounded-2xl border border-[#30384b] bg-[#0b0e16]/35 p-5 md:p-6">
 								<div>
 									<h2 className={sectionTitleClassName}>01 · Contact information</h2>
 									<p className="mt-1 text-sm text-gray-400">Only your name and email are required. Add the professional links you want employers to see.</p>
 								</div>
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+								<div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
 									<div className="flex flex-col gap-2">
 										<label htmlFor="resume-name" className="text-sm font-semibold text-gray-300">
 											Full Name *
@@ -648,8 +815,58 @@ const Generate = () => {
 									</div>
 								</div>
 
+								<div className="flex flex-col gap-3 rounded-xl border border-dashed border-[#3b4560] bg-[#111827]/55 p-4 sm:flex-row sm:items-center sm:justify-between">
+									<div className="flex items-center gap-3">
+										{profileImage ? (
+											<img
+												src={profileImage}
+												alt="Selected resume portrait"
+												className="h-14 w-14 rounded-full border border-violet-300/30 object-cover"
+											/>
+										) : (
+											<div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#3b4560] bg-[#0b0e16] text-gray-500">
+												<ImagePlus className="h-5 w-5" />
+											</div>
+										)}
+										<div>
+											<p className="text-sm font-semibold text-gray-200">
+												Profile photo <span className="font-normal text-gray-500">(optional)</span>
+											</p>
+											<p className="mt-1 text-xs text-gray-400">
+												JPG, PNG, or WebP up to 5 MB. Included in the PDF only.
+											</p>
+										</div>
+									</div>
+									<div className="flex items-center gap-2">
+										<label
+											htmlFor="resume-profile-image"
+											className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#3b4560] bg-[#0b0e16] px-3 py-2 text-xs font-semibold text-gray-200 transition hover:border-violet-300/40 hover:text-white"
+										>
+											<ImagePlus className="h-4 w-4" />
+											{profileImage ? "Change photo" : "Add photo"}
+										</label>
+										<input
+											id="resume-profile-image"
+											type="file"
+											accept="image/jpeg,image/png,image/webp"
+											onChange={handleProfileImageChange}
+											className="sr-only"
+										/>
+										{profileImage && (
+											<button
+												type="button"
+												onClick={() => setProfileImage("")}
+												aria-label="Remove profile photo"
+												className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#3b4560] text-gray-400 transition hover:border-red-400/40 hover:bg-red-400/10 hover:text-red-200"
+											>
+												<X className="h-4 w-4" />
+											</button>
+										)}
+									</div>
+								</div>
+
 								</section>
-								<section className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
+								<section className="flex flex-col gap-5 rounded-2xl border border-[#30384b] bg-[#0b0e16]/35 p-5 md:p-6">
 								<div>
 									<h2 className={sectionTitleClassName}>02 · Target position</h2>
 									<p className="mt-1 text-sm text-gray-400">Choose the role you want this resume to focus on. The summary and wording will be tailored to it.</p>
@@ -671,7 +888,7 @@ const Generate = () => {
 								</div>
 								</section>
 
-								<section className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
+								<section className="flex flex-col gap-5 rounded-2xl border border-[#30384b] bg-[#0b0e16]/35 p-5 md:p-6">
 								<div>
 									<h2 className={sectionTitleClassName}>03 · Work experience <span className="text-sm font-medium text-gray-500">(optional)</span></h2>
 									<p className="mt-1 text-sm leading-relaxed text-gray-400">Include internships, freelance work, part-time roles, or volunteering. Describe what you did and the result; numbers are useful when you know them. You can skip this if you’re new to work.</p>
@@ -681,7 +898,7 @@ const Generate = () => {
 									{experiences.map((exp, index) => (
 										<div
 											key={index}
-											className="relative flex flex-col gap-4 rounded-2xl border border-white/10 bg-zinc-950/40 p-4 md:p-5"
+											className="relative flex flex-col gap-4 rounded-2xl border border-[#30384b] bg-[#111827]/70 p-4 md:p-5"
 										>
 											<div className="flex items-center justify-between gap-3">
 												<h3 className="text-sm font-semibold text-cyan-200">Position {index + 1}</h3>
@@ -778,14 +995,14 @@ const Generate = () => {
 								</div>
 								</section>
 
-								<section className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
+								<section className="flex flex-col gap-5 rounded-2xl border border-[#30384b] bg-[#0b0e16]/35 p-5 md:p-6">
 								<div>
 									<h2 className={sectionTitleClassName}>04 · Education</h2>
 									<p className="mt-1 text-sm text-gray-400">Add your most relevant education. If a score isn’t relevant or you’d rather not share it, leave it blank.</p>
 								</div>
 
 								<div className="flex flex-col gap-4">
-									<div className="p-4 bg-zinc-900/30 rounded-xl border border-white/5 flex flex-col gap-3 hover:border-purple-500/30 transition">
+									<div className="flex flex-col gap-3 rounded-xl border border-[#30384b]/70 bg-[#111827]/70 p-4 transition hover:border-violet-300/20">
 										<h3 className="text-xs font-semibold text-purple-400 uppercase tracking-wider">
 											High School
 										</h3>
@@ -828,7 +1045,7 @@ const Generate = () => {
 											/>
 										</div>
 									</div>
-									<div className="p-4 bg-zinc-900/30 rounded-xl border border-white/5 flex flex-col gap-3 hover:border-purple-500/30 transition">
+									<div className="flex flex-col gap-3 rounded-xl border border-[#30384b]/70 bg-[#111827]/70 p-4 transition hover:border-violet-300/20">
 										<h3 className="text-xs font-semibold text-purple-400 uppercase tracking-wider">
 											College / University
 										</h3>
@@ -874,7 +1091,7 @@ const Generate = () => {
 								</div>
 								</section>
 
-								<section className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
+								<section className="flex flex-col gap-5 rounded-2xl border border-[#30384b] bg-[#0b0e16]/35 p-5 md:p-6">
 								<div>
 									<h2 className={sectionTitleClassName}>05 · Skills & languages</h2>
 									<p className="mt-1 text-sm text-gray-400">Separate items with commas. Include tools, methods, and languages you can confidently discuss.</p>
@@ -906,7 +1123,7 @@ const Generate = () => {
 								</div>
 								</section>
 
-								<section className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
+								<section className="flex flex-col gap-5 rounded-2xl border border-[#30384b] bg-[#0b0e16]/35 p-5 md:p-6">
 									<div>
 										<h2 className={sectionTitleClassName}>06 · Additional sections <span className="text-sm font-medium text-gray-500">(optional)</span></h2>
 										<p className="mt-1 text-sm leading-relaxed text-gray-400">Add projects, certifications, awards, volunteering, publications, coursework, or any section that tells more of your story. Give each section your own heading.</p>
@@ -916,7 +1133,7 @@ const Generate = () => {
 										{customSections.map((section, index) => (
 											<div
 												key={index}
-												className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-zinc-950/40 p-4 md:p-5"
+												className="flex flex-col gap-3 rounded-2xl border border-[#30384b] bg-[#111827]/70 p-4 md:p-5"
 											>
 												<div className="flex items-center justify-between gap-3">
 													<h3 className="text-sm font-semibold text-cyan-200">Custom section {index + 1}</h3>
@@ -964,7 +1181,7 @@ const Generate = () => {
 								type="button"
 								onClick={handleGenerate}
 								disabled={loading}
-								className="mx-6 mb-7 flex w-[calc(100%-3rem)] cursor-pointer items-center justify-center gap-2 rounded-xl bg-[linear-gradient(to_right,#9333ea,#06b6d4)] py-4 text-base font-bold text-white shadow-lg shadow-purple-900/20 transition-all hover:shadow-[0_0_24px_rgba(147,51,234,0.4)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 md:mx-10 md:mb-9 md:w-[calc(100%-5rem)]"
+								className="mx-4 mb-5 flex w-[calc(100%-2rem)] cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#7367f5] py-4 text-base font-semibold text-white shadow-lg shadow-violet-900/20 transition-all hover:bg-[#8176ff] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:mx-6 sm:mb-7 sm:w-[calc(100%-3rem)] md:mx-10 md:mb-9 md:w-[calc(100%-5rem)]"
 							>
 								<Wand2 className="h-5 w-5" /> Generate Resume
 							</button>
@@ -974,12 +1191,12 @@ const Generate = () => {
 			</div>
 
 			{/* Why use our AI builder */}
-			<div className="flex justify-center items-center py-5 text-2xl font-bold text-white mt-16 no-print">
+			<div className="mt-14 flex items-center justify-center px-4 py-5 text-center text-2xl font-bold text-white no-print">
 				<h2>Why use our AI builder?</h2>
 			</div>
-			<div className="flex flex-wrap justify-center gap-6 px-4 md:px-8 max-w-6xl mb-20 no-print">
-				<div className="w-80 h-48 rounded-[10px] px-6 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-3 hover:shadow-[0_15px_30px_-10px_rgba(168,85,247,0.35)] duration-300 backdrop-blur-sm">
-					<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+			<div className="mb-20 grid w-full max-w-6xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 md:px-8 lg:grid-cols-3 no-print">
+				<div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-2xl border border-[#30384b] bg-[#111827]/85 px-6 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+					<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 						<Wand2 className="h-6 w-6" />
 					</div>
 					<h3 className="font-bold text-white text-lg mt-2">
@@ -990,8 +1207,8 @@ const Generate = () => {
 						to your target role.
 					</p>
 				</div>
-				<div className="w-80 h-48 rounded-[10px] px-6 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-3 hover:shadow-[0_15px_30px_-10px_rgba(168,85,247,0.35)] duration-300 backdrop-blur-sm">
-					<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+				<div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-2xl border border-[#30384b] bg-[#111827]/85 px-6 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+					<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 						<PanelLeft className="h-6 w-6" />
 					</div>
 					<h3 className="font-bold text-white text-lg mt-2">
@@ -1002,8 +1219,8 @@ const Generate = () => {
 						interview chances.
 					</p>
 				</div>
-				<div className="w-80 h-48 rounded-[10px] px-6 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-3 hover:shadow-[0_15px_30px_-10px_rgba(168,85,247,0.35)] duration-300 backdrop-blur-sm">
-					<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+				<div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-2xl border border-[#30384b] bg-[#111827]/85 px-6 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+					<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 						<Download className="h-6 w-6" />
 					</div>
 					<h3 className="font-bold text-white text-lg mt-2">Instant Export</h3>

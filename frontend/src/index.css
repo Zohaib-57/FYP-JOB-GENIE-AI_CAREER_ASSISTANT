@@ -1,14 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 
+:root {
+  font-family: 'Manrope', 'Inter', sans-serif;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #f6f7fc;
+  background-color: #0b0e16;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Manrope', 'Inter', sans-serif;
   font-optical-sizing: auto;
+  background: #0b0e16;
+  color: #f6f7fc;
+  letter-spacing: -0.02em;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 .resume-builder-form input,
 .resume-builder-form textarea {
   font: inherit;
   color: #f4f4f5;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+.resume-builder-form input:hover,
+.resume-builder-form textarea:hover {
+  border-color: rgba(166, 139, 255, 0.7);
+  background-color: rgba(11, 14, 22, 0.95);
 }
 
 .resume-builder-form input::placeholder,
@@ -18,8 +48,25 @@ body {
 
 .resume-builder-form input:focus,
 .resume-builder-form textarea:focus {
-  border-color: rgba(34, 211, 238, 0.65);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+  border-color: rgba(139, 124, 247, 0.85);
+  box-shadow: 0 0 0 3px rgba(139, 124, 247, 0.14), 0 12px 24px rgba(115, 103, 245, 0.12);
+  transform: translateY(-1px);
+}
+
+input,
+textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+input:hover,
+textarea:hover {
+  border-color: rgba(166, 139, 255, 0.7);
+}
+
+input:focus,
+textarea:focus {
+  border-color: rgba(139, 124, 247, 0.85);
+  box-shadow: 0 0 0 3px rgba(139, 124, 247, 0.12);
 }
 
 @keyframes shimmer {
@@ -69,7 +116,7 @@ input {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
-  outline: 2px solid #22d3ee;
+  outline: 2px solid #8b7cf7;
   outline-offset: 3px;
 }
 
@@ -81,6 +128,10 @@ input:focus-visible {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .hero-ambient {
+    display: none;
   }
 }
 
@@ -127,7 +178,7 @@ input:focus-visible {
 /* Firefox support */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #9333ea #18181b;
+  scrollbar-color: #7367f5 #111827;
 }
 
 .custom-scrollbar-black {
@@ -150,7 +201,6 @@ html {
 
 /* Custom Native Print Rules for Resume Export */
 @media print {
-  /* Force A4 borderless paper */
   @page {
     size: A4 portrait;
     margin: 0mm;
@@ -163,7 +213,6 @@ html {
     display: none !important;
   }
 
-  /* Reset the body and root containers so resume sits at the very top */
   html, body, #root {
     margin: 0 !important;
     padding: 0 !important;
@@ -171,26 +220,330 @@ html {
     min-height: auto !important;
   }
 
-  /* Strip all wrapper styling that could add spacing */
   #root > div {
+    display: block !important;
     background: white !important;
     min-height: auto !important;
     padding: 0 !important;
     margin: 0 !important;
   }
 
-  /* Position the resume paper flush at the top */
-  #resume-paper {
-    position: absolute;
-    left: 0;
-    top: 0;
+  .resume-builder-hero,
+  .resume-content-area {
+    display: contents !important;
+  }
+
+  .resume-print-region {
+    display: block !important;
     width: 210mm !important;
-    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    animation: none !important;
+  }
+
+  #resume-paper {
+    position: static;
+    width: 210mm !important;
+    min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
     background: white !important;
+    overflow: visible !important;
+  }
+
+  .resume-document {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .resume-section h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}
+
+.template-mini-preview {
+  position: relative;
+  display: flex;
+  min-height: 210px;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0.6rem;
+  background: #fff;
+  padding: 1rem 0.9rem;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+.template-mini-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  border-bottom: 2px solid #7c6cf2;
+  padding-bottom: 0.6rem;
+}
+
+.template-mini-avatar {
+  display: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #d7dce5;
+}
+
+.template-mini-title,
+.template-mini-subtitle,
+.template-mini-section,
+.template-mini-line {
+  display: block;
+  border-radius: 999px;
+  background: #d7dce5;
+}
+
+.template-mini-title {
+  width: 46%;
+  height: 0.36rem;
+  background: #334155;
+}
+
+.template-mini-subtitle {
+  width: 32%;
+  height: 0.25rem;
+  background: #9aa5b5;
+}
+
+.template-mini-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.38rem;
+  padding-top: 0.65rem;
+}
+
+.template-mini-section {
+  width: 38%;
+  height: 0.28rem;
+  margin-top: 0.18rem;
+  background: #887cf3;
+}
+
+.template-mini-line {
+  width: 100%;
+  height: 0.18rem;
+  background: #e2e6ed;
+}
+
+.template-mini-line--short {
+  width: 73%;
+}
+
+.template-mini-preview--sidebar {
+  padding-top: 1.2rem;
+}
+
+.template-mini-preview--sidebar .template-mini-header {
+  align-items: flex-start;
+  width: 100%;
+  padding-left: 32%;
+  text-align: left;
+}
+
+.template-mini-preview--sidebar .template-mini-avatar {
+  position: absolute;
+  top: 1.1rem;
+  left: 0.9rem;
+  display: block;
+}
+
+.template-mini-preview--sidebar .template-mini-content {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr;
+  grid-template-rows: repeat(4, 0.5rem);
+  gap: 0.45rem 0.5rem;
+}
+
+.template-mini-preview--modern .template-mini-header {
+  align-items: flex-start;
+  margin: -1rem -0.9rem 0;
+  border: 0;
+  background: #174b55;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.template-mini-preview--modern .template-mini-title {
+  background: #fff;
+}
+
+.template-mini-preview--modern .template-mini-subtitle {
+  background: #c4e6e5;
+}
+
+.resume-document {
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 14mm;
+  background: #fff;
+  color: #172033;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+
+.resume-header {
+  position: relative;
+  padding-bottom: 5mm;
+  border-color: #7969e8;
+}
+
+.resume-header-content {
+  min-width: 0;
+}
+
+.resume-header--with-photo .resume-header-content {
+  padding-right: 27mm;
+  padding-left: 27mm;
+}
+
+.resume-profile-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 22mm;
+  height: 22mm;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.resume-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-section {
+  break-inside: auto;
+}
+
+.resume-section h2 {
+  border-color: #d5dae3;
+  color: #4a3eaf;
+  letter-spacing: 0.04em;
+}
+
+.resume-entry {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.resume-template-sidebar .resume-header {
+  text-align: left;
+}
+
+.resume-template-sidebar .resume-header-content {
+  padding-right: 27mm;
+}
+
+.resume-template-sidebar .resume-header--with-photo .resume-header-content {
+  padding-left: 0;
+}
+
+.resume-template-sidebar .resume-header-content > div {
+  justify-content: flex-start;
+}
+
+.resume-template-sidebar .resume-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 0.95fr);
+  grid-template-areas:
+    "summary education"
+    "experience skills"
+    "custom custom";
+  align-items: start;
+  column-gap: 9mm;
+}
+
+.resume-template-sidebar .resume-summary {
+  grid-area: summary;
+}
+
+.resume-template-sidebar .resume-experience {
+  grid-area: experience;
+}
+
+.resume-template-sidebar .resume-education {
+  grid-area: education;
+  border-left: 1px solid #e0e4eb;
+  padding-left: 5mm;
+}
+
+.resume-template-sidebar .resume-custom {
+  grid-area: custom;
+}
+
+.resume-template-sidebar .resume-skills {
+  grid-area: skills;
+  display: flex;
+  flex-direction: column;
+  gap: 5mm;
+  border-left: 1px solid #e0e4eb;
+  padding-left: 5mm;
+}
+
+.resume-template-sidebar .resume-skills > div {
+  min-width: 0;
+}
+
+.resume-template-modern .resume-header {
+  margin: -14mm -14mm 8mm;
+  border: 0;
+  border-radius: 0;
+  background: #174b55;
+  padding: 10mm 14mm;
+  color: #fff;
+  text-align: left;
+}
+
+.resume-template-modern .resume-header-content {
+  padding-right: 28mm;
+}
+
+.resume-template-modern .resume-header--with-photo .resume-header-content {
+  padding-left: 0;
+}
+
+.resume-template-modern .resume-header h1,
+.resume-template-modern .resume-header p,
+.resume-template-modern .resume-header span {
+  color: #fff;
+}
+
+.resume-template-modern .resume-header .resume-profile-image {
+  top: 10mm;
+  right: 14mm;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.resume-template-modern .resume-header-content > div {
+  justify-content: flex-start;
+}
+
+.resume-template-modern .resume-section h2 {
+  border-color: #aad1ce;
+  color: #17606a;
+}
+
+.resume-template-modern .resume-header-content > p {
+  color: #c4e6e5;
+}
+
+@media print {
+  .resume-document {
+    width: 210mm !important;
+    min-height: 0 !important;
+    padding: 14mm !important;
   }
 }

@@ -61,13 +61,13 @@ const Login = ({ setAuthenticated }) => {
 	};
 
 	return (
-		<div className="page-transition relative flex flex-col lg:flex-row justify-center items-center min-h-[calc(100vh-68px)] gap-10 lg:gap-20 px-4 py-10">
-			<ParticleBackground />
+		<div className="page-transition relative flex min-h-[calc(100vh-68px)] flex-col items-center justify-center gap-8 px-4 py-10 lg:flex-row lg:gap-16">
+			<div className="pointer-events-none opacity-[0.05]"><ParticleBackground /></div>
 			<div className="hidden lg:block"><RobotAssistant message="Hi! I'm your career AI. Let me help you land your dream job!" /></div>
-			<div className="container border border-white/10 bg-white/5 min-h-[440px] w-full max-w-md duration-300 flex flex-col justify-center items-center rounded-2xl px-6 py-8 hover:shadow-[0_2px_30px_rgba(168,85,247,0.15)] hover:-translate-y-1">
+			<div className="relative z-10 flex min-h-[440px] w-full max-w-lg flex-col items-center justify-center rounded-3xl border border-[#30384b] bg-[#111827]/95 px-6 py-8 shadow-[0_24px_60px_rgba(15,23,42,0.6)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:border-violet-300/25 hover:shadow-[0_28px_70px_rgba(91,65,226,0.18)] sm:px-8 sm:py-10">
 				<div>
 					<span
-						className="robot-mark relative mx-auto mb-5 block h-12 w-12 overflow-hidden rounded-xl shadow-lg"
+						className="robot-mark relative mx-auto mb-5 block h-12 w-12 overflow-hidden rounded-xl border border-violet-300/15 bg-violet-400/[0.08] shadow-lg"
 						aria-hidden="true"
 					>
 						<img
@@ -84,15 +84,15 @@ const Login = ({ setAuthenticated }) => {
 					<div>
 						<form
 							onSubmit={handleLogin}
-							className="flex flex-col justify-center items-center text-white gap-4 mt-6"
+							className="mt-7 flex flex-col items-stretch justify-center gap-5 text-white"
 						>
-							<div className="relative flex flex-col">
-								<label htmlFor="login-email">Email</label>
-								<Mail className="absolute top-7 text-gray-500 pl-2 pt-1" />
+							<div className="relative flex flex-col gap-2">
+								<label htmlFor="login-email" className="text-sm font-medium text-gray-300">Email</label>
+								<Mail className="absolute top-9 text-gray-500 pl-2 pt-1" />
 								<input
 									id="login-email"
 									required
-									className="bg-zinc-900 px-8 py-2 w-[min(20rem,calc(100vw-5rem))] rounded-[7px] border border-gray-500 focus:outline-none focus:border-purple-500 focus:border-2 transition duration-200"
+									className="w-[min(20rem,calc(100vw-5rem))] rounded-xl border border-[#30384b] bg-[#0b0e16]/90 px-8 py-3 text-sm text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition duration-200 hover:-translate-y-0.5 hover:border-violet-300/35 hover:bg-[#0f172a] placeholder:text-gray-500 focus:border-[#8b7cf7] focus:outline-none focus:ring-2 focus:ring-violet-400/15 focus:-translate-y-0.5"
 									type="email"
 									placeholder="Enter your Email"
 									value={email}
@@ -100,13 +100,13 @@ const Login = ({ setAuthenticated }) => {
 								/>
 							</div>
 
-							<div className="relative flex flex-col">
-								<label htmlFor="login-password">Password</label>
-								<Lock className="absolute top-7 text-gray-500 pl-2 pt-1" />
+							<div className="relative flex flex-col gap-2">
+								<label htmlFor="login-password" className="text-sm font-medium text-gray-300">Password</label>
+								<Lock className="absolute top-9 text-gray-500 pl-2 pt-1" />
 								<input
 									id="login-password"
 									required
-									className="bg-zinc-900 px-8 py-2 w-[min(20rem,calc(100vw-5rem))] rounded-[7px] border border-gray-500 focus:outline-none focus:border-purple-500 focus:border-2 transition duration-200"
+									className="w-[min(20rem,calc(100vw-5rem))] rounded-xl border border-[#30384b] bg-[#0b0e16]/90 px-8 py-3 text-sm text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition duration-200 hover:-translate-y-0.5 hover:border-violet-300/35 hover:bg-[#0f172a] placeholder:text-gray-500 focus:border-[#8b7cf7] focus:outline-none focus:ring-2 focus:ring-violet-400/15 focus:-translate-y-0.5"
 									type="password"
 									placeholder="Enter password"
 									value={password}
@@ -117,7 +117,7 @@ const Login = ({ setAuthenticated }) => {
 							<div>
 								<button
 									disabled={isSubmitting}
-									className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] rounded-[7px] w-[min(20rem,calc(100vw-5rem))] mt-5 py-2 text-lg font-bold text-white hover:scale-[1.02] duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+									className="mt-3 w-[min(20rem,calc(100vw-5rem))] cursor-pointer rounded-xl bg-[#7367f5] py-3 text-base font-semibold text-white shadow-[0_16px_32px_rgba(115,103,245,0.35)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#8176ff] hover:shadow-[0_20px_38px_rgba(129,118,255,0.5)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
 									type="submit"
 								>
 									{isSubmitting ? "Signing in..." : "Login"}
@@ -125,9 +125,9 @@ const Login = ({ setAuthenticated }) => {
 							</div>
 						</form>
 
-						<div className="flex gap-5 justify-center mt-3">
+						<div className="mt-5 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm">
 							<p className="text-gray-400">Don't have an account?</p>
-							<Link to="/signup" className="text-purple-600">
+							<Link to="/signup" className="font-medium text-violet-300 hover:text-violet-200">
 								Sign up
 							</Link>
 						</div>

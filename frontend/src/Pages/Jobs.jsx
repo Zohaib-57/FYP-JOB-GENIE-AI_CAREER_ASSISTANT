@@ -13,7 +13,7 @@ import HeroAnimation from "./HeroAnimation";
 import { toast } from "sonner";
 
 const JobMatchDetails = ({ job }) => (
-	<div className="mt-3 rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-3">
+	<div className="mt-3 rounded-xl border border-violet-300/15 bg-violet-400/[0.05] p-3">
 		<p className="text-sm font-semibold text-cyan-300">
 			Resume match: {job.matchScore}/100
 		</p>
@@ -131,31 +131,31 @@ const Jobs = () => {
 	};
 
 	return (
-		<div className="page-transition flex flex-col items-center min-h-screen">
-			<div className="relative w-full flex flex-col items-center min-h-112.5 pb-10">
-				<HeroAnimation />
+		<div className="page-transition flex min-h-screen flex-col items-center bg-[#0b0e16]">
+			<div className="relative flex w-full flex-col items-center pb-10">
+				<div className="absolute inset-0"><HeroAnimation /></div>
 
-				<div className="relative z-10 flex items-center gap-2 bg-blue-900/30 border border-blue-500/20 text-blue-400 px-5 py-1.5 rounded-full mt-25 backdrop-blur-sm">
+				<div className="relative z-10 mt-20 flex items-center gap-2 rounded-full border border-violet-300/15 bg-violet-400/[0.08] px-4 py-1.5 text-violet-200 backdrop-blur-sm md:mt-24">
 					<Bot className="w-5 h-5" />
 					<p className="text-sm font-medium tracking-wide shadow-sm">
 						AI POWERED MATCHING
 					</p>
 				</div>
 
-				<div className="relative z-10 mt-6 text-center px-4">
-					<h1 className="text-transparent font-bold bg-clip-text bg-[linear-gradient(90deg,#06b6d4_0%,#9333ea_30%,#9333ea_70%,#06b6d4_100%)] text-5xl mb-3">
+				<div className="relative z-10 mt-5 px-4 text-center">
+					<h1 className="mb-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
 						<span className="text-white">Smart</span> Job Hunting
 					</h1>
-					<p className="text-gray-400 max-w-lg mx-auto">
+					<p className="mx-auto max-w-xl text-sm leading-7 text-gray-400 sm:text-base">
 						Upload your resume to find relevant job listings in Pakistan.
 					</p>
 				</div>
 
 				{/* Main Content Area: Conditional Rendering */}
-				<div className="relative z-10 w-full max-w-5xl px-4 lg:px-8 mt-12 flex justify-center text-white pb-10">
+				<div className="relative z-10 mt-10 flex w-full max-w-6xl justify-center px-4 pb-10 text-white lg:px-8">
 					{loading ? (
 						/* Loading State */
-						<div className="flex flex-col items-center justify-center p-20 gap-6 text-purple-400 w-full bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+						<div className="flex w-full flex-col items-center justify-center gap-6 rounded-2xl border border-[#30384b] bg-[#111827] p-8 text-violet-300 shadow-xl shadow-black/20 backdrop-blur-md sm:p-14">
 							<svg
 								className="animate-spin h-16 w-16"
 								viewBox="0 0 24 24"
@@ -189,7 +189,7 @@ const Jobs = () => {
 						/* Jobs Results State */
 						<div className="w-full flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-5 duration-700">
 							{/* Header Box */}
-							<div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4">
+							<div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-[#30384b] bg-[#111827] p-5 shadow-xl shadow-black/20 backdrop-blur-md sm:p-6 md:flex-row md:items-center">
 								<div>
 									<h2 className="text-white font-bold text-xl mb-2 flex items-center gap-2">
 										<Sparkles className="w-5 h-5 text-purple-400" />
@@ -199,13 +199,13 @@ const Jobs = () => {
 								</div>
 								<button
 									onClick={handleReset}
-									className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium bg-zinc-800 hover:bg-zinc-700 text-white transition duration-300 whitespace-nowrap shadow-lg"
+									className="flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-[#30384b] bg-[#1b2131] px-4 py-2.5 font-medium text-gray-200 shadow-lg transition duration-200 hover:bg-[#232b3d] md:w-auto md:px-5"
 								>
 									<RefreshCcw className="h-4 w-4" /> Search Again
 								</button>
 							</div>
 
-							<section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+							<section className="rounded-2xl border border-[#30384b] bg-[#111827] p-5 sm:p-6">
 								<h3 className="text-lg font-bold text-white">
 									What we identified in your resume
 								</h3>
@@ -231,7 +231,7 @@ const Jobs = () => {
 										{skills.map((skill, index) => (
 											<span
 												key={`${skill}-${index}`}
-												className="rounded-md border border-purple-500/30 bg-purple-900/30 px-3 py-1 text-xs text-purple-100"
+												className="rounded-lg border border-violet-300/15 bg-violet-400/[0.07] px-3 py-1 text-xs text-violet-100"
 											>
 												{skill}
 											</span>
@@ -247,7 +247,7 @@ const Jobs = () => {
 											{keywords.map((keyword, index) => (
 												<span
 													key={`${keyword}-${index}`}
-													className="rounded-md border border-cyan-500/20 bg-cyan-900/20 px-3 py-1 text-xs text-cyan-100"
+													className="rounded-lg border border-violet-300/15 bg-violet-400/[0.04] px-3 py-1 text-xs text-violet-100"
 												>
 													{keyword}
 												</span>
@@ -264,7 +264,7 @@ const Jobs = () => {
 							{searchWarnings.map((warning, index) => (
 								<p
 									key={`${warning}-${index}`}
-									className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-amber-200"
+									className="rounded-xl border border-amber-400/20 bg-amber-400/[0.06] p-4 text-amber-200"
 								>
 									{warning}
 								</p>
@@ -286,21 +286,21 @@ const Jobs = () => {
 										different resume.
 									</p>
 								) : (
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+									<div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5">
 								{jobs.map((job) => (
 									<div
 										key={job.id}
-										className="border border-white/10 bg-white/5 rounded-2xl p-5 flex flex-col justify-between hover:shadow-[0_0_30px_rgba(147,51,234,0.15)] hover:border-purple-500/30 transition-all duration-300"
+										className="flex flex-col justify-between rounded-2xl border border-[#30384b] bg-[#111827] p-5 transition duration-200 hover:-translate-y-0.5 hover:border-violet-300/25 hover:bg-[#1b2131]"
 									>
 										<div className="flex items-start gap-4 mb-4">
 											{job.logo ? (
 												<img
 													src={job.logo}
 													alt={job.company}
-													className="w-14 h-14 rounded-xl object-contain bg-white p-1"
+													className="h-14 w-14 shrink-0 rounded-xl bg-white p-1 object-contain"
 												/>
 											) : (
-												<div className="w-14 h-14 rounded-xl bg-purple-900/40 flex items-center justify-center shrink-0">
+												<div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.08]">
 													<Briefcase className="w-6 h-6 text-purple-400" />
 												</div>
 											)}
@@ -344,17 +344,17 @@ const Jobs = () => {
 						</div>
 					) : (
 						/* Upload Form State */
-						<div className="w-full max-w-xl p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl animate-in fade-in duration-500 shadow-2xl">
-							<label className="border-2 border-dashed border-indigo-500/40 rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer hover:border-indigo-400 hover:bg-white/5 transition duration-300 group">
+						<div className="w-full max-w-2xl rounded-3xl border border-[#30384b] bg-[#111827] p-5 shadow-2xl shadow-black/20 backdrop-blur-xl animate-in fade-in duration-500 sm:p-8">
+						<label className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-violet-300/30 bg-[#0b0e16]/60 p-8 text-center transition duration-200 hover:border-violet-300/60 hover:bg-violet-400/[0.04] sm:p-12">
 								<Upload
-									className="text-gray-400 mb-5 group-hover:text-indigo-400 transition"
+									className="mb-5 text-gray-400 transition group-hover:text-violet-300"
 									size={50}
 								/>
 								<p className="text-gray-200 text-xl font-medium">
 									{file ? file.name : "Click to upload your resume"}
 								</p>
 								<p className="text-gray-500 text-sm mt-2">
-									PDF or DOCX. Scanned PDFs need OCR/searchable text.
+									PDF or DOCX. English scanned PDFs are processed with OCR automatically.
 								</p>
 								<input
 									type="file"
@@ -367,7 +367,7 @@ const Jobs = () => {
 							<button
 								onClick={handleFindJobs}
 								disabled={loading || !file}
-								className="mt-8 w-full py-4 rounded-xl text-white font-bold text-lg bg-[linear-gradient(to_right,#9333ea,#06b6d4)] active:scale-95 cursor-pointer duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.5)] transition"
+								className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#7367f5] py-3.5 text-base font-semibold text-white transition duration-200 hover:bg-[#8176ff] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 sm:mt-8 sm:py-4 sm:text-lg"
 							>
 								Scan Job Market
 							</button>
@@ -376,14 +376,14 @@ const Jobs = () => {
 				</div>
 			</div>
 
-			<div className="mt-6 w-full bg-zinc-950/50 py-16 flex flex-col items-center border-t border-white/5">
-				<h2 className="text-center text-white font-bold text-3xl mb-10">
+			<div className="mt-6 flex w-full flex-col items-center border-t border-[#30384b]/70 bg-[#111827]/60 py-14">
+				<h2 className="mb-10 px-4 text-center text-2xl font-bold tracking-tight text-white sm:text-3xl">
 					How Our AI Agent Works
 				</h2>
 
-				<div className="flex flex-wrap justify-center gap-6 px-4 max-w-6xl">
-					<div className="w-72 h-52 rounded-2xl px-6 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-4 hover:-translate-y-2 duration-300 backdrop-blur-sm">
-						<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+				<div className="grid w-full max-w-6xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3">
+					<div className="flex min-h-52 flex-col items-center justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#111827] px-6 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+						<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 							<Bot className="h-6 w-6" />
 						</div>
 						<h3 className="font-semibold text-white text-lg">Resume Parsing</h3>
@@ -392,8 +392,8 @@ const Jobs = () => {
 							target roles from your uploaded resume.
 						</p>
 					</div>
-					<div className="w-72 h-52 rounded-2xl px-6 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-4 hover:-translate-y-2 duration-300 backdrop-blur-sm">
-						<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+					<div className="flex min-h-52 flex-col items-center justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#111827] px-6 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+						<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 							<Search className="h-6 w-6" />
 						</div>
 						<h3 className="font-semibold text-white text-lg">
@@ -404,8 +404,8 @@ const Jobs = () => {
 							suggested role and skills.
 						</p>
 					</div>
-					<div className="w-72 h-52 rounded-2xl px-6 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-4 hover:-translate-y-2 duration-300 backdrop-blur-sm">
-						<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+					<div className="flex min-h-52 flex-col items-center justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#111827] px-6 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+						<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 							<Sparkles className="h-6 w-6" />
 						</div>
 						<h3 className="font-semibold text-white text-lg">Relevant Search</h3>

@@ -8,8 +8,8 @@ const Footer = ({ isAuthenticated }) => {
 	const year = new Date().getFullYear();
 
 	return (
-		<footer className="no-print border-t border-white/10 bg-zinc-950/80">
-			<div className="mx-auto max-w-7xl px-6 py-12 md:px-8">
+		<footer className="no-print border-t border-[#30384b]/70 bg-[#0b0e16]">
+			<div className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-12">
 				<div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
 					<div className="max-w-sm">
 						<Link
@@ -26,7 +26,7 @@ const Footer = ({ isAuthenticated }) => {
 									className="h-full w-full object-contain"
 								/>
 							</span>
-							<span className="text-xl font-bold text-white">JobGenie</span>
+							<span className="text-xl font-bold tracking-tight text-white">JobGenie</span>
 						</Link>
 						<p className="mt-4 text-sm leading-relaxed text-gray-400">
 							{isLandingPage
@@ -45,7 +45,7 @@ const Footer = ({ isAuthenticated }) => {
 							</a>
 							<Link
 								to={isAuthenticated ? "/generate" : "/signup"}
-								className="inline-flex items-center justify-center gap-2 rounded-lg bg-[linear-gradient(to_right,#9333ea,#06b6d4)] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+								className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#7367f5] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#8176ff]"
 							>
 								{isAuthenticated ? "Open career tools" : "Get started"}
 								<ArrowRight className="h-4 w-4" />
@@ -76,7 +76,7 @@ const Footer = ({ isAuthenticated }) => {
 					)}
 				</div>
 
-				<div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-5 text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between">
+				<div className="mt-9 flex flex-col gap-3 border-t border-[#30384b]/70 pt-5 text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between">
 					<p>© {year} JobGenie. All rights reserved.</p>
 					<p className="inline-flex items-center gap-2">
 						<Bot className="h-4 w-4 text-cyan-400" />

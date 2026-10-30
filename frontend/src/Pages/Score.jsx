@@ -141,13 +141,13 @@ const Score = () => {
 	};
 
 	return (
-		<div className="min-h-screen flex flex-col items-center">
+		<div className="min-h-screen flex flex-col items-center bg-[#0b0e16]">
 			{/* Hero Section with Animation */}
-			<div className="relative w-full flex flex-col items-center min-h-125 pb-10">
-				<HeroAnimation />
+			<div className="relative flex w-full flex-col items-center pb-10">
+				<div className="absolute inset-0"><HeroAnimation /></div>
 
-				<div className="relative z-10 flex flex-col items-center justify-center pt-25 mb-10 px-4 text-center">
-					<h1 className="font-semibold text-5xl text-transparent bg-clip-text bg-[linear-gradient(90deg,#06b6d4_0%,#9333ea_30%,#9333ea_70%,#06b6d4_100%)] py-2">
+				<div className="relative z-10 mb-8 flex flex-col items-center justify-center px-4 pt-20 text-center md:pt-24">
+					<h1 className="py-2 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
 						<span className="text-white">Resume</span> Scoring
 					</h1>
 					<p className="text-gray-400 py-2 max-w-xl">
@@ -157,10 +157,10 @@ const Score = () => {
 				</div>
 
 				{/* Main Content Area: Conditional Rendering (Upload -> Loading -> Result) */}
-				<div className="relative z-10 w-full max-w-4xl px-4 lg:px-8 mt-4 flex justify-center text-white">
+				<div className="relative z-10 mt-2 flex w-full max-w-6xl justify-center px-4 text-white lg:px-8">
 					{loading ? (
 						/* Loading State */
-						<div className="flex flex-col items-center justify-center p-20 gap-6 text-purple-400 w-full bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+						<div className="flex w-full flex-col items-center justify-center gap-6 rounded-2xl border border-[#30384b] bg-[#111827] p-8 text-violet-300 shadow-xl shadow-black/20 backdrop-blur-md sm:p-14">
 							<svg
 								className="animate-spin h-16 w-16"
 								viewBox="0 0 24 24"
@@ -191,19 +191,33 @@ const Score = () => {
 						</div>
 					) : scoreData ? (
 						/* Score Results State */
-						<div className="w-full flex flex-col items-center gap-10 animate-in fade-in slide-in-from-bottom-5 duration-700">
-							<div className="w-full flex justify-end">
+						<div className="w-full flex flex-col items-center gap-6 animate-in fade-in slide-in-from-bottom-5 duration-700">
+							<div className="flex w-full justify-end">
 								<button
 									onClick={handleReset}
-									className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium bg-zinc-800 hover:bg-zinc-700 text-white transition duration-300"
+									className="flex items-center gap-2 rounded-xl border border-[#30384b] bg-[#1b2131] px-4 py-2.5 font-medium text-gray-200 transition duration-200 hover:bg-[#232b3d] sm:px-5"
 								>
 									<RefreshCcw className="h-4 w-4" /> Score Another
 								</button>
 							</div>
 
-							<div className="w-full rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl backdrop-blur-md sm:p-7">
-								<div className="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]">
-									<div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-zinc-950/60 p-5">
+							<div className="w-full overflow-hidden rounded-3xl border border-[#30384b] bg-[#111827] shadow-2xl shadow-black/20 backdrop-blur-md">
+								<div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] bg-gradient-to-r from-violet-500/[0.12] via-transparent to-cyan-400/[0.06] px-5 py-4 sm:px-7">
+									<div>
+										<p className="text-[11px] font-bold uppercase tracking-[0.2em] text-violet-200">
+											Resume insights
+										</p>
+										<h2 className="mt-1 text-lg font-semibold text-white sm:text-xl">
+											Your ATS readiness report
+										</h2>
+									</div>
+									<span className="rounded-full border border-white/10 bg-black/10 px-3 py-1.5 text-xs font-medium text-gray-300">
+										5 review areas
+									</span>
+								</div>
+								<div className="p-4 sm:p-7">
+								<div className="grid gap-5 lg:grid-cols-[220px_minmax(0,1fr)]">
+									<div className="flex flex-col items-center justify-center rounded-2xl border border-violet-300/10 bg-gradient-to-b from-violet-400/[0.07] to-[#0b0e16] p-4 sm:p-5">
 										<CircularScore score={overallScore} />
 										<p className={`mt-1 text-sm font-semibold ${overallScore >= 75 ? "text-green-300" : overallScore >= 50 ? "text-amber-300" : "text-red-300"}`}>
 											{overallScore >= 75 ? "Strong foundation" : overallScore >= 50 ? "Room to improve" : "Needs attention"}
@@ -213,25 +227,22 @@ const Score = () => {
 										</p>
 									</div>
 
-									<div className="flex flex-col justify-center gap-4">
+									<div className="flex flex-col justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#0b0e16]/65 p-5 sm:p-6">
 										<div>
 											<p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Your next best step</p>
 											<h2 className="mt-2 text-xl font-bold text-white">
-												{prioritySection
+												{improvementItems[0]
+													? "Start with this focused action"
+													: prioritySection
 													? `Focus on ${sectionLabel(prioritySection[0]).toLowerCase()}`
 													: "Review your resume improvements"}
 											</h2>
 											<p className="mt-2 text-sm leading-relaxed text-gray-300">
-												{prioritySection?.[1]?.feedback ||
+												{improvementItems[0] ||
+													prioritySection?.[1]?.feedback ||
 													"Use the prioritized suggestions below to strengthen your resume."}
 											</p>
 										</div>
-										{improvementItems[0] && (
-											<div className="rounded-xl border border-amber-400/20 bg-amber-400/[0.07] p-4">
-												<p className="mb-1 text-xs font-semibold uppercase tracking-wider text-amber-300">Try this first</p>
-												<p className="text-sm leading-relaxed text-gray-200">{improvementItems[0]}</p>
-											</div>
-										)}
 									</div>
 								</div>
 
@@ -254,7 +265,7 @@ const Score = () => {
 											return (
 												<article
 													key={key}
-													className={`rounded-xl border ${tone.border} bg-zinc-950/55 p-4 ${index === 0 ? "ring-1 ring-amber-400/15" : ""}`}
+													className={`rounded-xl border ${tone.border} bg-[#0b0e16]/75 p-4 ${index === 0 ? "ring-1 ring-amber-400/15" : ""}`}
 												>
 													<div className="flex items-start justify-between gap-3">
 														<div>
@@ -264,7 +275,7 @@ const Score = () => {
 														<p className={`shrink-0 text-lg font-bold tabular-nums ${tone.text}`}>{score}<span className="text-xs font-medium text-gray-500">/100</span></p>
 													</div>
 													<div
-														className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800"
+														className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#232b3d]"
 														role="progressbar"
 														aria-label={`${sectionLabel(key)} score`}
 														aria-valuemin={0}
@@ -283,7 +294,7 @@ const Score = () => {
 								</section>
 
 								<div className="mt-6 grid gap-4 lg:grid-cols-2">
-									<section className="rounded-2xl border border-green-400/15 bg-green-400/[0.04] p-5">
+									<section className="rounded-2xl border border-green-400/15 bg-green-400/[0.035] p-5">
 										<h3 className="flex items-center gap-2 font-semibold text-green-300">
 											<CheckCircle className="h-5 w-5" /> What’s working
 										</h3>
@@ -299,7 +310,7 @@ const Score = () => {
 											<p className="mt-3 text-sm text-gray-400">No strengths were returned for this analysis.</p>
 										)}
 									</section>
-									<section className="rounded-2xl border border-amber-400/15 bg-amber-400/[0.04] p-5">
+									<section className="rounded-2xl border border-amber-400/15 bg-amber-400/[0.035] p-5">
 										<h3 className="flex items-center gap-2 font-semibold text-amber-300">
 											<AlertCircle className="h-5 w-5" /> Improvement plan
 										</h3>
@@ -317,21 +328,22 @@ const Score = () => {
 										)}
 									</section>
 								</div>
+								</div>
 							</div>
 						</div>
 					) : (
 						/* Upload Form State */
-						<div className="w-full max-w-xl p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl animate-in fade-in duration-500 shadow-2xl">
-							<label className="border-2 border-dashed border-indigo-500/40 rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer hover:border-indigo-400 hover:bg-white/5 transition duration-300 group">
+						<div className="w-full max-w-2xl rounded-3xl border border-[#30384b] bg-[#111827] p-5 shadow-2xl shadow-black/20 backdrop-blur-xl animate-in fade-in duration-500 sm:p-8">
+							<label className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-violet-300/30 bg-[#0b0e16]/60 p-8 text-center transition duration-200 hover:border-violet-300/60 hover:bg-violet-400/[0.04] sm:p-12">
 								<Upload
-									className="text-gray-400 mb-5 group-hover:text-indigo-400 transition"
+									className="mb-5 text-gray-400 transition group-hover:text-violet-300"
 									size={50}
 								/>
 								<p className="text-gray-200 text-xl font-medium">
 									{file ? file.name : "Click to upload your resume"}
 								</p>
 								<p className="text-gray-500 text-sm mt-2">
-									Only PDF or DOCX format (max 5MB)
+									PDF or DOCX (max 5 MB). English scanned PDFs use OCR automatically.
 								</p>
 								<input
 									type="file"
@@ -344,7 +356,7 @@ const Score = () => {
 							<button
 								onClick={handleScore}
 								disabled={loading || !file}
-								className="mt-8 w-full py-4 rounded-xl text-white font-bold text-lg bg-[linear-gradient(to_right,#9333ea,#06b6d4)] active:scale-95 cursor-pointer duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.5)] transition"
+								className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#7367f5] py-3.5 text-base font-semibold text-white transition duration-200 hover:bg-[#8176ff] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 sm:mt-8 sm:py-4 sm:text-lg"
 							>
 								Analyze Resume Score
 							</button>
@@ -354,13 +366,13 @@ const Score = () => {
 			</div>
 
 			{/* What Our AI Analyzes Area */}
-			<div className="mt-20 w-full bg-zinc-950/50 py-16 flex flex-col items-center border-t border-white/5">
-				<h2 className="text-white font-bold text-3xl text-center mb-12">
+			<div className="mt-16 flex w-full flex-col items-center border-t border-[#30384b]/70 bg-[#111827]/60 py-14">
+				<h2 className="mb-10 px-4 text-center text-2xl font-bold tracking-tight text-white sm:text-3xl">
 					What Our AI Analyzes
 				</h2>
-				<div className="flex flex-wrap justify-center gap-6 px-4 max-w-6xl">
-					<div className="w-64 h-52 rounded-2xl px-5 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-4 hover:-translate-y-2 duration-300 backdrop-blur-sm">
-						<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+				<div className="grid w-full max-w-6xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4">
+					<div className="flex min-h-52 flex-col items-center justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#111827] px-5 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+						<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 							<Target className="h-6 w-6" />
 						</div>
 						<h3 className="font-semibold text-white text-lg">
@@ -371,8 +383,8 @@ const Score = () => {
 							systems.
 						</p>
 					</div>
-					<div className="w-64 h-52 rounded-2xl px-5 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-4 hover:-translate-y-2 duration-300 backdrop-blur-sm">
-						<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+					<div className="flex min-h-52 flex-col items-center justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#111827] px-5 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+						<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 							<TrendingUp className="h-6 w-6" />
 						</div>
 						<h3 className="font-semibold text-white text-lg">
@@ -382,8 +394,8 @@ const Score = () => {
 							Matches your content against industry-relevant technical keywords.
 						</p>
 					</div>
-					<div className="w-64 h-52 rounded-2xl px-5 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-4 hover:-translate-y-2 duration-300 backdrop-blur-sm">
-						<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+					<div className="flex min-h-52 flex-col items-center justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#111827] px-5 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+						<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 							<Award className="h-6 w-6" />
 						</div>
 						<h3 className="font-semibold text-white text-lg">Impact Scoring</h3>
@@ -391,8 +403,8 @@ const Score = () => {
 							Evaluates the strength of your action verbs and business metrics.
 						</p>
 					</div>
-					<div className="w-64 h-52 rounded-2xl px-5 border border-white/10 bg-white/5 flex flex-col justify-center items-center gap-4 hover:-translate-y-2 duration-300 backdrop-blur-sm">
-						<div className="bg-[linear-gradient(to_right,#9333ea,#06b6d4)] text-white h-12 w-12 rounded-xl flex justify-center items-center shadow-lg">
+					<div className="flex min-h-52 flex-col items-center justify-center gap-4 rounded-2xl border border-[#30384b] bg-[#111827] px-5 transition duration-200 hover:-translate-y-1 hover:border-violet-300/25 hover:bg-[#1b2131]">
+						<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-300/15 bg-violet-400/[0.1] text-violet-200">
 							<BarChart3 className="h-6 w-6" />
 						</div>
 						<h3 className="font-semibold text-white text-lg">
